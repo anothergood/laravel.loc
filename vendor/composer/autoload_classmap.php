@@ -45,6 +45,7 @@ return array(
     'App\\Providers\\RouteServiceProvider' => $baseDir . '/app/Providers/RouteServiceProvider.php',
     'App\\Traits\\Orderable' => $baseDir . '/app/Traits/Orderable.php',
     'App\\User' => $baseDir . '/app/User.php',
+    'App\\UserUser' => $baseDir . '/app/UserUser.php',
     'Aws\\ACMPCA\\ACMPCAClient' => $vendorDir . '/aws/aws-sdk-php/src/ACMPCA/ACMPCAClient.php',
     'Aws\\ACMPCA\\Exception\\ACMPCAException' => $vendorDir . '/aws/aws-sdk-php/src/ACMPCA/Exception/ACMPCAException.php',
     'Aws\\Acm\\AcmClient' => $vendorDir . '/aws/aws-sdk-php/src/Acm/AcmClient.php',

@@ -7,14 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Attachment extends Model
 {
-  use Orderable;
-
-        protected $fillable = [
+    protected $fillable = [
           'file_path','file_type',
         ];
 
-        public function posts()
-        {
-            return $this->belongsTo('App\Post');
-        }
+    public function attachable()
+    {
+        return $this->morphTo();
+    }
 }

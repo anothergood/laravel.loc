@@ -83,71 +83,35 @@ class LoginController extends Controller
 
     public function store(LoginRequest $request)
     {
-      $user = new User;
-      $user_access = new User;
+        $user = new User;
+        $user_access = new User;
 
-      if (User::where('email', $request->email)->exists()){                   //проверка на существование email
+        if (User::where('email', $request->email)->exists()){                   //проверка на существование email
             $user = DB::table('users')->where('email', $request->email)->first();
             $user_access->id = $user->id;
 
             if (Hash::check($request->password, $user->password)) {           //проверка совпадения пароля
-                $access_token = $user_access->createToken('MyToken');
-
                 $date_now = Carbon::now();
                 $date_expires = $access_token->token->expires_at;
                 $expires_in = $date_expires->diffInSeconds($date_now);        //expires_in
-
                 $userId = $user->id;
                 $name = 'MyToken';
-
                 $req = $this->make($userId, $name, '');
 
-               $value = array('1' => $access_token,
-                              '2' => $req,
-                             );
+                // return $req;
+                // $access_token = $user_access->createToken('MyToken');
+                 // $value = ['1' => $access_token,
+                 //           '2' => $req];
 
-                // $value = array('token_type' => "Bearer",
-                //                'expires_in' => $expires_in,
-                //                'access_token' => $access_token->accessToken,
-                //                'newTokens' => $req,
-                //               );
-                              return $value;
-            } else {}
-      } else {}
+                return response(['token_type' => "Bearer",
+                                 'expires_in' => $expires_in,
+                                 'access_token' => $req->accessToken]);
+                return $value;
+            } else {
+                return response('message' => 'wrong password',400); //bed request 400?
+            }
+        } else {
+            return response('message' => 'user with such mail is not registered',400); //bed request 400?
+        }
     }
 }
-
-
-// $user = new User;
-// $user_access = new User;
-//
-// if (User::where('email', $request->email)->exists()){                   //проверка на существование email
-//       $user = DB::table('users')->where('email', $request->email)->first();
-//       $user_access->id = $user->id;
-//
-//       if (Hash::check($request->password, $user->password)) {           //проверка совпадения пароля
-//           $access_token = $user_access->createToken('MyToken');
-//
-//           $date_now = Carbon::now();
-//           $date_expires = $access_token->token->expires_at;
-//           $expires_in = $date_expires->diffInSeconds($date_now);        //expires_in
-//           $value = array('token_type' => "Bearer",
-//                          'expires_in' => $expires_in,
-//                          'access_token' => $access_token->accessToken,
-//                         );
-//       } else {}
-//         return $value;
-// } else {}
-
-// $http = new Client;
-// $response = $http->post('http://localhost/oauth/token', [
-//     'form_params' => [
-//         'grant_type' => 'password',
-//         'client_id' => '2',
-//         'client_secret' => 'dhfMsVMYWVq1tt5udbn3Xr1W6Ev876WknbAYkLjX',
-//         'username' => $request->email,
-//         'password' => $request->password,
-//         'scope' => '',
-//     ],
-// ]);
-// return json_decode((string) $response->getBody(), true);

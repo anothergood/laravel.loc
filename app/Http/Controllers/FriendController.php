@@ -2,162 +2,47 @@
 
 namespace App\Http\Controllers;
 
-use App\UserUser;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreFriendRequest;
 
 class FriendController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-     public function invitefriend(StoreFriendRequest $request)
-     {
-           $friend = UserUser::where('user_initiator_id', '=', $request->user()->id)->where('user_id','=', $request->user_id);
-           if ($friend->exists()) {
-               $pivot = $friend->get();
-               if ($pivot->contains('status', 'pending')) {
-                   return $value = array('message'=>'request already exists');
-               } elseif ($pivot->contains('status', 'approved')) {
-                   return $value = array('message'=>'user is already a friend');
-               } elseif ($pivot->contains('status', 'denied')) {
-                   return $value = array('message'=>'request denied');
-               }
-           } else {
-               $initiator = User::find($request->user()->id);
-               $user = User::find($request->user_id);
-               $initiator->users()->save($user, ['status' => 'pending']);
-               return $user;
-           }
-
-
-         // $friend = Friend::where('user_initiator_id', '=', $request->user()->id)->where('user_id','=', $request->user_id);
-         // if ($friend->exists()) {
-         //     if ($friend->status = 'pending') {
-         //         return $value = array('message'=>'request already exists');
-         //     } elseif ($friend->status = 'approved') {
-         //         return $value = array('message'=>'user is already a friend');
-         //     } elseif ($friend->status = 'denied') {
-         //         return $value = array('message'=>'request denied');
-         //     }
-         // } else {
-         //     $friend = new Friend;
-         //     $friend->user_initiator_id = $request->user()->id;
-         //     $friend->user_id = $request->user_id;
-         //     $friend->status = 'pending';
-         //     $friend->save();
-         //     return $friend;
-         // }
-     }
-
-     public function approvefriend(StoreFriendRequest $request)
-     {
-       $friend = UserUser::where('user_initiator_id','=', $request->user_id)->where('user_id', '=', $request->user()->id);
-         if ($friend->exists()) {
-             $pivot = $friend->get();
-             if ($pivot->contains('status','pending')) {
-               $initiator = User::find($request->user()->id);
-               $user = User::find($request->user_id);
-               $user->users()->updateExistingPivot($initiator, ['status' => 'approved']);
-               return $user;
-             } elseif ($pivot->contains('status','approved')) {
-                 return $value = array('message'=>'user is already a friend');
-             } elseif ($pivot->contains('status','denied')) {
-                 return $value = array('message'=>'request denied');
-             }
-         } else {
-             return $value = array('message'=>'there is no request from this user');
-         }
-
-
-         // if (Friend::where('user_initiator_id','=', $id)->where('user_id', '=', $request->user()->id)->exists()) {
-         //     $friend = Friend::where('user_initiator_id','=', $id)->where('user_id', '=', $request->user()->id)->first();
-         //     if ($friend->status = 'pending') {
-         //         $friend->status = $request->status;
-         //         $friend->save();
-         //         return $friend;
-         //     } elseif ($friend->status = 'approved') {
-         //         return $value = array('message'=>'user is already a friend');
-         //     } elseif ($friend->status = 'denied') {
-         //         return $value = array('message'=>'request denied');
-         //     }
-         // } else {
-         //     return $value = array('message'=>'there is no request from this user');
-         // }
-     }
-
-
-    public function index()
+    public function inviteFriend(StoreFriendRequest $request)
     {
-        //
+        $initiator = $request->user();
+        $friend = $initiator->users()->where('user_id', '=', $request->user_id);
+        if ($friend->exists()) {
+            $status = $friend->first()->pivot->status;
+            if ($status == 'pending') {
+                return response(['message'=>'request already exists'], 422);    //422 Unprocessable Entity??
+            } elseif ($status == 'approved') {
+                return response(['message'=>'user is already a friend'], 422);   //422 Unprocessable Entity??
+            } elseif ($status == 'denied') {
+                return response(['message'=>'request denied'], 422);           //422 Unprocessable Entity??
+            }
+        } else {
+            $initiator->users()->attach($request->user_id, ['status' => 'pending']);
+            return response(['message' => 'invitation sent']);
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function approveFriend(StoreFriendRequest $request)
     {
-
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-      //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-      //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        $initiator = User::find($request->user_id);
+        $friend = $initiator->users()->where('user_id', '=', $request->user()->id);
+        if ($friend->exists()) {
+            $status = $friend->first()->pivot->status;
+            if ($status == 'pending') {
+                $initiator->users()->updateExistingPivot($request->user()->id, ['status' => 'approved']);
+                return response(['message' => 'invitation approved']);
+            } elseif ($status == 'approved') {
+                return response(['message'=>'user is already a friend'], 422);   //422 Unprocessable Entity??
+            } elseif ($status == 'denied') {
+                return response(['message'=>'request denied'], 422);   //422 Unprocessable Entity??
+            }
+        } else {
+            return response(['message'=>'there is no request from this user'], 422);   //422 Unprocessable Entity??
+        }
     }
 }

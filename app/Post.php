@@ -9,25 +9,27 @@ class Post extends Model
 {
     use Orderable;
 
-    protected $fillable = ['title'];
+    protected $fillable = [
+        'title', 'body',
+    ];
 
-    public function user()
+    public function users()
     {
-      return $this->belongsTo('App\User');
+      return $this->belongsTo(User::class);
     }
 
     public function comments()
     {
-        return $this->hasMany('App\Comment');
+        return $this->hasMany(Comment::class);
     }
 
     public function likes()
     {
-        return $this->hasMany('App\Like');
+        return $this->hasMany(User::class, 'user_post','post_id','user_id');
     }
 
     public function attachments()
     {
-        return $this->hasMany('App\Attachment');
+         return $this->morphMany(Attachment::class, 'attachable');
     }
 }

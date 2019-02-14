@@ -26,12 +26,16 @@ class User extends Authenticatable
 
     public function posts()
     {
-        return $this->hasMany('App\Post');
+        return $this->hasMany(Post::class);
     }
 
     public function users()
     {
-      return $this->belongsToMany('App\User','user_user','user_initiator_id','user_id')->withPivot('status')->withTimestamps();
+      return $this->belongsToMany(User::class,'user_user','user_initiator_id','user_id')->withPivot('status')->withTimestamps();
+    }
 
+    public function likes()
+    {
+      return $this->belongsToMany(Post::class,'user_post','user_id','post_id');
     }
 }

@@ -509,6 +509,7 @@ class ComposerStaticInit319e4213072432131ad427cbacc3282b
         'App\\Providers\\RouteServiceProvider' => __DIR__ . '/../..' . '/app/Providers/RouteServiceProvider.php',
         'App\\Traits\\Orderable' => __DIR__ . '/../..' . '/app/Traits/Orderable.php',
         'App\\User' => __DIR__ . '/../..' . '/app/User.php',
+        'App\\UserUser' => __DIR__ . '/../..' . '/app/UserUser.php',
         'Aws\\ACMPCA\\ACMPCAClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/ACMPCA/ACMPCAClient.php',
         'Aws\\ACMPCA\\Exception\\ACMPCAException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/ACMPCA/Exception/ACMPCAException.php',
         'Aws\\Acm\\AcmClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Acm/AcmClient.php',

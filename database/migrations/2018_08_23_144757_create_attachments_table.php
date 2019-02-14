@@ -17,8 +17,7 @@ class CreateAttachmentsTable extends Migration
             $table->increments('id');
             $table->string('file_path', 100);
             $table->string('file_type', 20);
-            $table->integer('entity_id')->unsigned()->index();
-            $table->string('entity_type', 20);
+            $table->morphs('attachable');
             $table->timestamps();
         });
     }

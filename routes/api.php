@@ -14,7 +14,7 @@ use App\User;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+Route::middleware('auth:api')->get('/user-self', function (Request $request) {
     return $request->user();
 });
 Route::post('register', 'RegisterController@store');
@@ -25,6 +25,8 @@ Route::group(['prefix' => 'friends','middleware' => 'auth:api'], function () {
     Route::post('invite', 'FriendController@inviteFriend');
     Route::post('approve', 'FriendController@approveFriend');
 });
+
+
 
 Route::group(['prefix' => 'posts','middleware' => 'auth:api'], function () {
     Route::apiResource('comments', 'CommentController');

@@ -15,8 +15,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
-        Relation::morphMap(['posts' => 'App\Post',
-                            'comments' => 'App\Comment',]);
+        Relation::morphMap([
+            'posts' => 'App\Post',
+            'comments' => 'App\Comment',
+        ]);
     }
 
     /**

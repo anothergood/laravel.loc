@@ -2,9 +2,10 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
@@ -24,6 +25,11 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    public function verifyUser()
+    {
+        return $this->hasOne(VerifyUser::class);
+    }
+
     public function posts()
     {
         return $this->hasMany(Post::class);
@@ -31,11 +37,11 @@ class User extends Authenticatable
 
     public function users()
     {
-      return $this->belongsToMany(User::class,'user_user','user_initiator_id','user_id')->withPivot('status')->withTimestamps();
+        return $this->belongsToMany(User::class, 'user_user', 'user_initiator_id', 'user_id')->withPivot('status')->withTimestamps();
     }
 
     public function likes()
     {
-      return $this->belongsToMany(Post::class,'user_post','user_id','post_id');
+        return $this->belongsToMany(Post::class, 'user_post', 'user_id', 'post_id');
     }
 }

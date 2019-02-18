@@ -18,12 +18,17 @@ class User extends Authenticatable
      */
 
     protected $fillable = [
-        'username', 'email', 'password',
+        'username', 'email', 'password','verified',
     ];
 
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function routeNotificationForMail($notification)
+    {
+        return $this->email;
+    }
 
     public function verifyUser()
     {

@@ -14,7 +14,7 @@ use App\User;
 |
 */
 
-Route::get('user-self', 'UserController@userSelf')->middleware('auth:api');
+Route::get('user-self', 'UserController@userSelf')->middleware('auth:api')->middleware('verify');
 
 Route::post('register', 'RegisterController@store');
 Route::get('user/verify/{token}', 'RegisterController@verifyUser');

@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\VerifyUser;
-use App\Mail\VerifyMail;
+use App\Jobs\SendMessage;
 use Illuminate\Http\Request;
+use App\Notifications\MailConfirmation;
 use App\Http\Requests\StoreUserRequest;
 
 class RegisterController extends Controller
@@ -21,12 +22,15 @@ class RegisterController extends Controller
 
         $verifyUser = VerifyUser::create([
             'user_id' => $user->id,
-            'token' => sha1(time())
+            'token' => sha1(time()),
         ]);
-        \Mail::to($user->email)->send(new VerifyMail($user));
+        SendMessage::dispatch($user);
+        // $user->notify(new MailConfirmation($user));
 
-        return response(['user' => $user,
-        'accessToken' => $token]);
+        return response([
+            'user' => $user,
+            'accessToken' => $token,
+        ]);
     }
 
     public function verifyUser($token)
